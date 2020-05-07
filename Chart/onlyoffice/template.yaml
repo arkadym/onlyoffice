@@ -1,0 +1,161 @@
+---
+# Source: onlyoffice/templates/1.1.onlyoffice-configmap-local.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: onlyoffice-RELEASE-NAME-app-local
+  labels:
+    app: onlyoffice
+    chart: "onlyoffice-1"
+    release: RELEASE-NAME
+    heritage: Helm
+data:
+  local.json: |
+    {
+        "FileConverter": {
+            "converter": {
+                "maxDownloadBytes": "209715200"
+            },
+            "inputLimits": [
+                {
+                    "type": "docx;dotx;docm;dotm",
+                    "zip": {
+                        "uncompressed": "200MB",
+                        "template": "*.xml"
+                    }
+                },
+                {
+                    "type": "xlsx;xltx;xlsm;xltm",
+                    "zip": {
+                        "uncompressed": "200MB",
+                        "template": "*.xml"
+                    }
+                },
+                {
+                    "type": "pptx;ppsx;potx;pptm;ppsm;potm",
+                    "zip": {
+                        "uncompressed": "200MB",
+                        "template": "*.xml"
+                    }
+                }
+            ]
+        }
+    }
+---
+# Source: onlyoffice/templates/1.4.onlyoffice-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: onlyoffice-RELEASE-NAME-app
+  labels:
+    app: onlyoffice
+    chart: "onlyoffice-1"
+    release: RELEASE-NAME
+    heritage: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: onlyoffice-http
+      protocol: TCP
+  selector:
+    app: onlyoffice-RELEASE-NAME-app
+---
+# Source: onlyoffice/templates/1.3.onlyoffice-deployment.yml
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: onlyoffice-RELEASE-NAME-app
+  labels:
+    app: onlyoffice
+    chart: "onlyoffice-1"
+    release: RELEASE-NAME
+    heritage: Helm
+spec:
+  selector:
+    matchLabels:
+      app: onlyoffice-RELEASE-NAME-app
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: onlyoffice-RELEASE-NAME-app
+    spec:
+      containers:
+        - name: onlyoffice-onlyoffice
+          image: "onlyoffice/documentserver:latest"
+#          command: ['/bin/sh', '-c', 'while true; do echo hello; sleep 10;done']
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 300m
+              memory: 256Mi
+          env:
+            - name: JWT_ENABLED
+              value: 'true'
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: onlyoffice-RELEASE-NAME-app
+                  key: onlyoffice-secret
+          ports:
+            - name: onlyoffice-http
+              containerPort: 80
+              protocol: TCP
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: 80
+#            initialDelaySeconds: 300
+#            timeoutSeconds: 30
+---
+# Source: onlyoffice/templates/1.5.onlyoffice-ingress.yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: onlyoffice-RELEASE-NAME-app
+  labels:
+    app: onlyoffice
+    chart: "onlyoffice-1"
+    release: RELEASE-NAME
+    heritage: Helm
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    certmanager.k8s.io/cluster-issuer: letsencrypt
+    kubernetes.io/tls-acme: 'true'
+    nginx.ingress.kubernetes.io/tls-acme: 'true'
+    nginx.ingress.kubernetes.io/proxy-body-size: 10G
+spec:
+  tls:
+  - hosts:
+    - onlyoffice.domain.tld
+    secretName: tls-onlyoffice-RELEASE-NAME-app
+  rules:
+  - host: onlyoffice.domain.tld
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: onlyoffice-RELEASE-NAME-app
+          servicePort: 80
+---
+# Source: onlyoffice/templates/1.2.onlyoffice-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: onlyoffice-RELEASE-NAME-app
+  labels:
+    app: onlyoffice
+    chart: "onlyoffice-1"
+    release: RELEASE-NAME
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+data:
+  onlyoffice-secret: "R2Z1SUI1cUt3ZQ=="

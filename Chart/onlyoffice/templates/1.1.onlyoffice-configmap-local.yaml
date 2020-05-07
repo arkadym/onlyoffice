@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app.fullname" . }}-local
+  labels:
+    app: {{ template "name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  local.json: |
+    {
+{{- if .Values.app.settings.maxDocumentSize }}
+        "FileConverter": {
+            "converter": {
+                "maxDownloadBytes": {{ mul .Values.app.settings.maxDocumentSize 1024 1024 | quote }}
+            },
+            "inputLimits": [
+                {
+                    "type": "docx;dotx;docm;dotm",
+                    "zip": {
+                        "uncompressed": "{{ .Values.app.settings.maxDocumentSize }}MB",
+                        "template": "*.xml"
+                    }
+                },
+                {
+                    "type": "xlsx;xltx;xlsm;xltm",
+                    "zip": {
+                        "uncompressed": "{{ .Values.app.settings.maxDocumentSize }}MB",
+                        "template": "*.xml"
+                    }
+                },
+                {
+                    "type": "pptx;ppsx;potx;pptm;ppsm;potm",
+                    "zip": {
+                        "uncompressed": "{{ .Values.app.settings.maxDocumentSize }}MB",
+                        "template": "*.xml"
+                    }
+                }
+            ]
+        }
+{{- end }}
+    }

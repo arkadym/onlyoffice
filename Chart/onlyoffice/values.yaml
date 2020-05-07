@@ -1,0 +1,48 @@
+## Default values for Redmine Helm Chart.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+## Default values for Redmine
+##
+app:
+  replicas: 1
+
+  ## image configuration.
+  ##
+  image:
+    repository: "onlyoffice/documentserver"
+    tag: "latest"
+#    pullPolicy: "IfNotPresent"
+
+  secret:
+    enabled: true
+#    password: ""
+
+  settings:
+    maxDocumentSize: 200 # size in MB
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "300m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+
+  ## Service configuration.
+  ##
+  service:
+    type: "ClusterIP"
+#    port: "80"
+
+  ## Ingress settings
+  ## tls - true will enable: 
+  ## - tlsSecretName configured - will use custom SSL cert
+  ## - letsEncrypt enabled - will use LE
+  ingress:
+    enabled: true
+    tls: true
+#    tlsSecretName: ""
+    letsEncrypt: true
+    serverName: "onlyoffice.domain.tld"
+      

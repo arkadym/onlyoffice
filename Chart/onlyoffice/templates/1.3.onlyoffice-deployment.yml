@@ -1,0 +1,52 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "app.fullname" . }}
+  replicas: {{ .Values.app.replicas }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.fullname" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-onlyoffice
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+{{- if .Values.app.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+{{- end }}
+#          command: ['/bin/sh', '-c', 'while true; do echo hello; sleep 10;done']
+{{- if .Values.app.resources }}
+          resources:
+{{ toYaml .Values.app.resources | indent 12 }}
+{{- end }}
+{{- if .Values.app.secret.enabled }}
+          env:
+            - name: JWT_ENABLED
+              value: 'true'
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "app.fullname" . }}
+                  key: onlyoffice-secret
+{{- end }}
+          ports:
+            - name: onlyoffice-http
+              containerPort: 80
+              protocol: TCP
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: 80
+#            initialDelaySeconds: 300
+#            timeoutSeconds: 30
