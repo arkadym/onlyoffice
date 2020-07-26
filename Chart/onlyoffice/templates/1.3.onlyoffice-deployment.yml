@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ template "app.fullname" . }}
+  name: {{ template "onlyoffice.fullname" . }}
   labels:
     app: {{ template "name" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -10,34 +10,36 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "app.fullname" . }}
-  replicas: {{ .Values.app.replicas }}
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+  replicas: {{ .Values.onlyoffice.replicas }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ template "app.fullname" . }}
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
     spec:
       containers:
         - name: {{ .Chart.Name }}-onlyoffice
-          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-{{- if .Values.app.image.pullPolicy }}
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          image: "{{ .Values.onlyoffice.image.repository }}:{{ .Values.onlyoffice.image.tag }}"
+{{- if .Values.onlyoffice.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.onlyoffice.image.pullPolicy }}
 {{- end }}
 #          command: ['/bin/sh', '-c', 'while true; do echo hello; sleep 10;done']
-{{- if .Values.app.resources }}
+{{- if .Values.onlyoffice.resources }}
           resources:
-{{ toYaml .Values.app.resources | indent 12 }}
+{{ toYaml .Values.onlyoffice.resources | indent 12 }}
 {{- end }}
-{{- if .Values.app.secret.enabled }}
+{{- if .Values.onlyoffice.secret.enabled }}
           env:
             - name: JWT_ENABLED
               value: 'true'
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "app.fullname" . }}
+                  name: {{ template "onlyoffice.fullname" . }}
                   key: onlyoffice-secret
 {{- end }}
           ports:

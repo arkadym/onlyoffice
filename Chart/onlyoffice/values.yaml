@@ -4,7 +4,7 @@
 
 ## Default values for Redmine
 ##
-app:
+onlyoffice:
   replicas: 1
 
   ## image configuration.
