@@ -18,16 +18,16 @@ metadata:
     kubernetes.io/tls-acme: 'true'
     nginx.ingress.kubernetes.io/tls-acme: 'true'
 {{- end }}
-    nginx.ingress.kubernetes.io/proxy-body-size: 10G
+    nginx.ingress.kubernetes.io/proxy-body-size: "{{ .Values.onlyoffice.settings.maxDocumentSize }}M"
 spec:
 {{- if .Values.onlyoffice.ingress.tls }}
   tls:
   - hosts:
-    - {{ .Values.onlyoffice.ingress.serverName }}
+    - {{ .Values.onlyoffice.settings.serverName }}
     secretName: {{ .Values.onlyoffice.ingress.tlsSecretName | default (printf "%s-%s" "tls" (include "onlyoffice.fullname" .)) }}
 {{- end }}
   rules:
-  - host: {{ .Values.onlyoffice.ingress.serverName }}
+  - host: {{ .Values.onlyoffice.settings.serverName }}
     http:
       paths:
       - path: /

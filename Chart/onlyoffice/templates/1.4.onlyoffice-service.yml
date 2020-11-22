@@ -10,7 +10,8 @@ metadata:
 spec:
   type: {{ .Values.onlyoffice.service.type }}
   ports:
-    - port: {{ .Values.onlyoffice.service.port1 | default "80" }}
+    - name: onlyoffice-http
+      port: {{ .Values.onlyoffice.service.port | default "80" }}
       targetPort: onlyoffice-http
       protocol: TCP
   selector:
