@@ -8,10 +8,10 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.onlyoffice.service.type }}
+  type: {{ .Values.service.type }}
   ports:
     - name: onlyoffice-http
-      port: {{ .Values.onlyoffice.service.port | default "80" }}
+      port: {{ .Values.service.port | default "80" }}
       targetPort: onlyoffice-http
       protocol: TCP
   selector:

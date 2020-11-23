@@ -10,30 +10,30 @@ metadata:
 data:
   local.json: |
     {
-{{- if .Values.onlyoffice.settings.maxDocumentSize }}
+{{- if .Values.settings.maxDocumentSize }}
         "FileConverter": {
             "converter": {
-                "maxDownloadBytes": {{ mul .Values.onlyoffice.settings.maxDocumentSize 1024 1024 | quote }}
+                "maxDownloadBytes": {{ mul .Values.settings.maxDocumentSize 1024 1024 | quote }}
             },
             "inputLimits": [
                 {
                     "type": "docx;dotx;docm;dotm",
                     "zip": {
-                        "uncompressed": "{{ .Values.onlyoffice.settings.maxDocumentSize }}MB",
+                        "uncompressed": "{{ .Values.settings.maxDocumentSize }}MB",
                         "template": "*.xml"
                     }
                 },
                 {
                     "type": "xlsx;xltx;xlsm;xltm",
                     "zip": {
-                        "uncompressed": "{{ .Values.onlyoffice.settings.maxDocumentSize }}MB",
+                        "uncompressed": "{{ .Values.settings.maxDocumentSize }}MB",
                         "template": "*.xml"
                     }
                 },
                 {
                     "type": "pptx;ppsx;potx;pptm;ppsm;potm",
                     "zip": {
-                        "uncompressed": "{{ .Values.onlyoffice.settings.maxDocumentSize }}MB",
+                        "uncompressed": "{{ .Values.settings.maxDocumentSize }}MB",
                         "template": "*.xml"
                     }
                 }

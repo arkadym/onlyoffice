@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: {{ template "name" . }}
       release: {{ .Release.Name }}
-  replicas: {{ .Values.onlyoffice.replicas }}
+  replicas: {{ .Values.replicas }}
   strategy:
     type: Recreate
   template:
@@ -23,16 +23,16 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}-onlyoffice
-          image: "{{ .Values.onlyoffice.image.repository }}:{{ .Values.onlyoffice.image.tag }}"
-{{- if .Values.onlyoffice.image.pullPolicy }}
-          imagePullPolicy: {{ .Values.onlyoffice.image.pullPolicy }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+{{- if .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- end }}
 #          command: ['/bin/sh', '-c', 'while true; do echo hello; sleep 10;done']
-{{- if .Values.onlyoffice.resources }}
+{{- if .Values.resources }}
           resources:
-{{ toYaml .Values.onlyoffice.resources | indent 12 }}
+{{ toYaml .Values.resources | indent 12 }}
 {{- end }}
-{{- if .Values.onlyoffice.secret.enabled }}
+{{- if .Values.secret.enabled }}
           env:
             - name: JWT_ENABLED
               value: 'true'
