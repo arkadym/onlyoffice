@@ -42,6 +42,6 @@ service:
 ingress:
   enabled: true
   tls: true
-#    tlsSecretName: ""
+#  tlsSecretName: ""
   letsEncrypt: true
     

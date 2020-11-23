@@ -1,0 +1,1 @@
+helm template onlyoffice -f onlyoffice\values.yaml -n default > template.yaml

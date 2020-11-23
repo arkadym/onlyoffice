@@ -1,1 +1,0 @@
-helm template . -f values.yaml -n nextcloud-online-tc > template.yaml
