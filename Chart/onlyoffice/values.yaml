@@ -43,5 +43,9 @@ ingress:
   enabled: true
   tls: true
 #  tlsSecretName: ""
-  letsEncrypt: true
+  annotations: {}
+    ## letsEncrypt - cert-manager
+    # certmanager.k8s.io/cluster-issuer: letsencrypt
+    # kubernetes.io/tls-acme: 'true'
+    # nginx.ingress.kubernetes.io/tls-acme: 'true'
     

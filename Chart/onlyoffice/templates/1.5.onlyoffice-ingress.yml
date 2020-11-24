@@ -13,12 +13,10 @@ metadata:
 {{- if .Values.ingress.tls }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 {{- end }}
-{{- if .Values.ingress.letsEncrypt }}
-    certmanager.k8s.io/cluster-issuer: letsencrypt
-    kubernetes.io/tls-acme: 'true'
-    nginx.ingress.kubernetes.io/tls-acme: 'true'
-{{- end }}
     nginx.ingress.kubernetes.io/proxy-body-size: "{{ .Values.settings.maxDocumentSize }}M"
+{{- if .Values.nextcloud.ingress.annotations }}
+{{ toYaml .Values.nextcloud.ingress.annotations | indent 4 }}
+{{- end }}
 spec:
 {{- if .Values.ingress.tls }}
   tls:
