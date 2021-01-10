@@ -14,8 +14,8 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 {{- end }}
     nginx.ingress.kubernetes.io/proxy-body-size: "{{ .Values.settings.maxDocumentSize }}M"
-{{- if .Values.nextcloud.ingress.annotations }}
-{{ toYaml .Values.nextcloud.ingress.annotations | indent 4 }}
+{{- if .Values.ingress.annotations }}
+{{ toYaml .Values.ingress.annotations | indent 4 }}
 {{- end }}
 spec:
 {{- if .Values.ingress.tls }}
